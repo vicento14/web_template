@@ -115,14 +115,14 @@ if ($method == 'search_account_list') {
 	$stmt = $conn->prepare($query);
 	$stmt->execute();
 	// GET QUERY COLUMN RESULT
-	if ($stmt->columnCount() > 0) {
-		echo '<tr>';
-		for ($i = 0; $i < $stmt->columnCount(); $i++) {
-			$col = $stmt->getColumnMeta($i); // 0 indexed so 0 would be first column
-			echo '<th>'.$col['name'].'</th>';
-		}
-		echo '</tr>';
-	}
+	// if ($stmt->columnCount() > 0) {
+	// 	echo '<tr>';
+	// 	for ($i = 0; $i < $stmt->columnCount(); $i++) {
+	// 		$col = $stmt->getColumnMeta($i); // 0 indexed so 0 would be first column
+	// 		echo '<th>'.$col['name'].'</th>';
+	// 	}
+	// 	echo '</tr>';
+	// }
 	if ($stmt->rowCount() > 0) {
 		foreach($stmt->fetchALL() as $j){
 			$c++;

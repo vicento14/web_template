@@ -2,27 +2,7 @@
 $( document ).ready(function() {
     load_accounts();
     load_accounts2();
-});		
-
-/*const load_accounts =()=>{
-   var employee_no = document.getElementById('employee_no_search').value;
-   var full_name = document.getElementById('full_name_search').value;
-   var user_type = document.getElementById('user_type_search').value;
-	$.ajax({
-        url:'../../process/admin/accounts/acct-management_p.php',
-        type:'POST',
-        cache:false,
-        data:{
-            method:'account_list',
-            employee_no:employee_no,
-            full_name:full_name,
-            user_type:user_type
-        },success:function(response){
-            $('#list_of_accounts').html(response);
-            $('#spinner').fadeOut();
-        }
-    });
-}*/
+});
 
 const load_accounts =()=>{
     $.ajax({
@@ -64,81 +44,81 @@ const search_accounts =()=>{
 }
 
 const register_accounts =()=>{
-var employee_no = document.getElementById('employee_no').value;
-var full_name = document.getElementById('full_name').value;
-var username = document.getElementById('username').value;
-var password = document.getElementById('password').value;
-var section = document.getElementById('section').value;
-var user_type = document.getElementById('user_type').value;
-if (employee_no == '') {
-    Swal.fire({
-        icon: 'info',
-        title: 'Please Input Employee No !!!',
-        text: 'Information',
-        showConfirmButton: false,
-        timer : 1000
-    }); 
-}else if(full_name == ''){
-    Swal.fire({
-        icon: 'info',
-        title: 'Please Input Full Name !!!',
-        text: 'Information',
-        showConfirmButton: false,
-        timer : 1000
-    }); 
-}else if(username == ''){
-    Swal.fire({
-        icon: 'info',
-        title: 'Please Input Username !!!',
-        text: 'Information',
-        showConfirmButton: false,
-        timer : 1000
-    });  
-}else if(password == ''){
-    Swal.fire({
-        icon: 'info',
-        title: 'Please Input Password !!!',
-        text: 'Information',
-        showConfirmButton: false,
-        timer : 1000
-    });  
-}else if(section == ''){
-    Swal.fire({
-        icon: 'info',
-        title: 'Please Input Section !!!',
-        text: 'Information',
-        showConfirmButton: false,
-        timer : 1000
-    });    
-}else if(user_type == ''){
-    Swal.fire({
-        icon: 'info',
-        title: 'Please Select User Type !!!',
-        text: 'Information',
-        showConfirmButton: false,
-        timer : 1000
-    });  
-}else{
-	$.ajax({
-        url:'../../process/admin/accounts/acct-management_p.php',
-        type:'POST',
-        cache:false,
-        data:{
-            method:'register_account',
-            employee_no:employee_no,
-            full_name:full_name,
-            username:username,
-            password:password,
-            section:section,
-            user_type:user_type
-        },success:function(response){
-            if (response == 'success') {
+    var employee_no = document.getElementById('employee_no').value;
+    var full_name = document.getElementById('full_name').value;
+    var username = document.getElementById('username').value;
+    var password = document.getElementById('password').value;
+    var section = document.getElementById('section').value;
+    var user_type = document.getElementById('user_type').value;
+    if (employee_no == '') {
+        Swal.fire({
+            icon: 'info',
+            title: 'Please Input Employee No !!!',
+            text: 'Information',
+            showConfirmButton: false,
+            timer : 1000
+        }); 
+    }else if(full_name == ''){
+        Swal.fire({
+            icon: 'info',
+            title: 'Please Input Full Name !!!',
+            text: 'Information',
+            showConfirmButton: false,
+            timer : 1000
+        }); 
+    }else if(username == ''){
+        Swal.fire({
+            icon: 'info',
+            title: 'Please Input Username !!!',
+            text: 'Information',
+            showConfirmButton: false,
+            timer : 1000
+        });  
+    }else if(password == ''){
+        Swal.fire({
+            icon: 'info',
+            title: 'Please Input Password !!!',
+            text: 'Information',
+            showConfirmButton: false,
+            timer : 1000
+        });  
+    }else if(section == ''){
+        Swal.fire({
+            icon: 'info',
+            title: 'Please Input Section !!!',
+            text: 'Information',
+            showConfirmButton: false,
+            timer : 1000
+        });    
+    }else if(user_type == ''){
+        Swal.fire({
+            icon: 'info',
+            title: 'Please Select User Type !!!',
+            text: 'Information',
+            showConfirmButton: false,
+            timer : 1000
+        });  
+    }else{
+        $.ajax({
+            url:'../../process/admin/accounts/acct-management_p.php',
+            type:'POST',
+            cache:false,
+            data:{
+                method:'register_account',
+                employee_no:employee_no,
+                full_name:full_name,
+                username:username,
+                password:password,
+                section:section,
+                user_type:user_type
+            },success:function(response){
+                if (response == 'success') {
                     Swal.fire({
-                      icon: 'success',
-                      title: 'Succesfully Recorded!!!',
-                      text: 'Success',
-                      showConfirmButton: false,
-                      timer : 1000
+                        icon: 'success',
+                        title: 'Succesfully Recorded!!!',
+                        text: 'Success',
+                        showConfirmButton: false,
+                        timer : 1000
                     });
                     $('#employee_no').val('');
                     $('#full_name').val('');
@@ -146,33 +126,33 @@ if (employee_no == '') {
                     $('#password').val('');
                     $('#section').val('');
                     $('#user_type').val('');
-					load_accounts();
+                    load_accounts();
                     load_accounts2();
-					$('#new_account').modal('hide');
-            }else if(response == 'Already Exist'){
-                     Swal.fire({
-                      icon: 'info',
-                      title: 'Duplicate Data !!!',
-                      text: 'Information',
-                      showConfirmButton: false,
-                      timer : 1000
-                    });
-            }else{
+                    $('#new_account').modal('hide');
+                }else if(response == 'Already Exist'){
                     Swal.fire({
-                      icon: 'error',
-                      title: 'Error !!!',
-                      text: 'Error',
-                      showConfirmButton: false,
-                      timer : 1000
-                    });      
+                        icon: 'info',
+                        title: 'Duplicate Data !!!',
+                        text: 'Information',
+                        showConfirmButton: false,
+                        timer : 1000
+                    });
+                }else{
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error !!!',
+                        text: 'Error',
+                        showConfirmButton: false,
+                        timer : 1000
+                    });
+                }
             }
-        }
-    });
+        });
     }
 }
 
 const get_accounts_details =(param)=>{
- var string = param.split('~!~');
+    var string = param.split('~!~');
     var id = string[0];
     var id_number = string[1];
     var username = string[2];
@@ -191,15 +171,15 @@ const get_accounts_details =(param)=>{
 }
 
 const update_account =()=>{
- var id = document.getElementById('id_account_update').value;
- var id_number = document.getElementById('employee_no_update').value;
- var username = document.getElementById('username_update').value;
- var full_name = document.getElementById('full_name_update').value;
- var password = document.getElementById('password_update').value;
- var section = document.getElementById('section_update').value;
- var role = document.getElementById('user_type_update').value;
+    var id = document.getElementById('id_account_update').value;
+    var id_number = document.getElementById('employee_no_update').value;
+    var username = document.getElementById('username_update').value;
+    var full_name = document.getElementById('full_name_update').value;
+    var password = document.getElementById('password_update').value;
+    var section = document.getElementById('section_update').value;
+    var role = document.getElementById('user_type_update').value;
 
-$.ajax({
+    $.ajax({
         url:'../../process/admin/accounts/acct-management_p.php',
         type:'POST',
         cache:false,
@@ -214,38 +194,38 @@ $.ajax({
             role:role
         },success:function(response){
             if (response == 'success') {
-                    Swal.fire({
-                      icon: 'success',
-                      title: 'Succesfully Recorded!!!',
-                      text: 'Success',
-                      showConfirmButton: false,
-                      timer : 1000
-                    });
-                    $('#employee_no').val('');
-                    $('#full_name').val('');
-                    $('#username').val('');
-                    $('#password').val('');
-                    $('#section').val('');
-                    $('#user_type').val('');
-					load_accounts();
-                    load_accounts2();
-					$('#update_account').modal('hide');
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Succesfully Recorded!!!',
+                    text: 'Success',
+                    showConfirmButton: false,
+                    timer : 1000
+                });
+                $('#employee_no').val('');
+                $('#full_name').val('');
+                $('#username').val('');
+                $('#password').val('');
+                $('#section').val('');
+                $('#user_type').val('');
+                load_accounts();
+                load_accounts2();
+                $('#update_account').modal('hide');
             }else if(response == 'duplicate'){
-                     Swal.fire({
-                      icon: 'info',
-                      title: 'Duplicate Data !!!',
-                      text: 'Information',
-                      showConfirmButton: false,
-                      timer : 1000
-                    });
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Duplicate Data !!!',
+                    text: 'Information',
+                    showConfirmButton: false,
+                    timer : 1000
+                });
             }else{
-                    Swal.fire({
-                      icon: 'error',
-                      title: 'Error !!!',
-                      text: 'Error',
-                      showConfirmButton: false,
-                      timer : 1000
-                    });
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error !!!',
+                    text: 'Error',
+                    showConfirmButton: false,
+                    timer : 1000
+                });
             }
         }
     });
@@ -262,39 +242,39 @@ const delete_account =()=>{
             id:id
         },success:function(response){
             if (response == 'success') {
-                    Swal.fire({
-                      icon: 'info',
-                      title: 'Succesfully Deleted !!!',
-                      text: 'Information',
-                      showConfirmButton: false,
-                      timer : 1000
-                    });
-                    load_accounts();
-                    load_accounts2();
-                    $('#update_account').modal('hide');
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Succesfully Deleted !!!',
+                    text: 'Information',
+                    showConfirmButton: false,
+                    timer : 1000
+                });
+                load_accounts();
+                load_accounts2();
+                $('#update_account').modal('hide');
             }else{
-                    Swal.fire({
-                      icon: 'error',
-                      title: 'Error !!!',
-                      text: 'Error',
-                      showConfirmButton: false,
-                      timer : 1000
-                    });  
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error !!!',
+                    text: 'Error',
+                    showConfirmButton: false,
+                    timer : 1000
+                });
             }
         }
     });
 }
 
 const export_employees = () => {
-  var employee_no = document.getElementById('employee_no_search').value;
-  var full_name = document.getElementById('full_name_search').value;
-  window.open('../../process/export/exp_accounts.php?employee_no='+employee_no+"&full_name="+full_name,'_blank');
+    var employee_no = document.getElementById('employee_no_search').value;
+    var full_name = document.getElementById('full_name_search').value;
+    window.open('../../process/export/exp_accounts.php?employee_no='+employee_no+"&full_name="+full_name,'_blank');
 }
 
 const export_employees3 = () => {
-  var employee_no = document.getElementById('employee_no_search').value;
-  var full_name = document.getElementById('full_name_search').value;
-  window.open('../../process/export/exp_accounts3.php?employee_no='+employee_no+"&full_name="+full_name,'_blank');
+    var employee_no = document.getElementById('employee_no_search').value;
+    var full_name = document.getElementById('full_name_search').value;
+    window.open('../../process/export/exp_accounts3.php?employee_no='+employee_no+"&full_name="+full_name,'_blank');
 }
 
 const export_csv = (table_id, separator = ',') => {
