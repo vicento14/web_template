@@ -100,23 +100,6 @@ const get_next_page = () => {
     }
 }
 
-const load_accounts = current_page =>{
-    $.ajax({
-        url:'../../process/user/pagination/page2_p.php',
-        type:'POST',
-        cache:false,
-        data:{
-            method:'account_list',
-            current_page:current_page
-        }, 
-        success:function(response){
-            $('#list_of_accounts').html(response);
-            count_accounts();
-            load_accounts_pagination();
-        }
-    });
-}
-
 const count_accounts = () => {
     var employee_no = sessionStorage.getItem('employee_no_search');
     var full_name = sessionStorage.getItem('full_name_search');
