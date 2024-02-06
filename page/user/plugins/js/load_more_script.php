@@ -1,4 +1,7 @@
 <script type="text/javascript">
+// AJAX IN PROGRESS GLOBAL VARS
+var search_accounts_ajax_in_progress = false;
+
 $( document ).ready(function() {
      search_accounts(1);
 });
@@ -93,6 +96,11 @@ const load_accounts_last_page = () =>{
 }
 
 const search_accounts = current_page =>{
+    // If an AJAX call is already in progress, return immediately
+    if (search_accounts_ajax_in_progress) {
+        return;
+    }
+
     var employee_no = document.getElementById('employee_no_search').value;
     var full_name = document.getElementById('full_name_search').value;
     var user_type = document.getElementById('user_type_search').value;
@@ -121,6 +129,10 @@ const search_accounts = current_page =>{
         sessionStorage.setItem('full_name_search', full_name);
         sessionStorage.setItem('user_type_search', user_type);
     }
+
+    // Set the flag to true as we're starting an AJAX call
+    search_accounts_ajax_in_progress = true;
+
     $.ajax({
         url:'../../process/user/pagination/load_more_p.php',
         type:'POST',
@@ -132,16 +144,20 @@ const search_accounts = current_page =>{
             user_type:user_type,
             current_page:current_page
         },
-        beforeSend: () => {
+        beforeSend: (jqXHR, settings) => {
+            document.getElementById("btnNextPage").setAttribute('disabled', true);
             var loading = `<tr id="loading"><td colspan="6" style="text-align:center;"><div class="spinner-border text-dark" role="status"><span class="sr-only">Loading...</span></div></td></tr>`;
             if (current_page == 1) {
                 document.getElementById("list_of_accounts").innerHTML = loading;
             } else {
                 $('#accounts_table tbody').append(loading);
             }
+            jqXHR.url = settings.url;
+            jqXHR.type = settings.type;
         }, 
         success:function(response){
             $('#loading').remove();
+            document.getElementById("btnNextPage").removeAttribute('disabled');
             if (current_page == 1) {
                 $('#accounts_table tbody').html(response);
             } else {
@@ -149,7 +165,14 @@ const search_accounts = current_page =>{
             }
             sessionStorage.setItem('accounts_table_pagination', current_page);
             count_accounts();
+            // Set the flag back to false as the AJAX call has completed
+            search_accounts_ajax_in_progress = false;
         }
+    }).fail((jqXHR, textStatus, errorThrown) => {
+        console.log(jqXHR);
+        console.log(`System Error : Call IT Personnel Immediately!!! They will fix it right away. Error: url: ${jqXHR.url}, method: ${jqXHR.type} ( HTTP ${jqXHR.status} - ${jqXHR.statusText} ) Press F12 to see Console Log for more info.`);
+        // Set the flag back to false as the AJAX call has completed
+        search_accounts_ajax_in_progress = false;
     });
 }
 </script>

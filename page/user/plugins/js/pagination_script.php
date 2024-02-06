@@ -1,4 +1,7 @@
 <script type="text/javascript">
+// AJAX IN PROGRESS GLOBAL VARS
+var search_accounts_ajax_in_progress = false;
+
 $( document ).ready(function() {
      search_accounts(1, 0);
 });
@@ -162,6 +165,11 @@ const load_accounts_pagination = () =>{
 }
 
 const search_accounts = (current_page, order_by_code) =>{
+    // If an AJAX call is already in progress, return immediately
+    if (search_accounts_ajax_in_progress) {
+        return;
+    }
+
     //var order_by_code = 0;
 
     var employee_no = document.getElementById('employee_no_search').value;
@@ -192,6 +200,10 @@ const search_accounts = (current_page, order_by_code) =>{
         sessionStorage.setItem('full_name_search', full_name);
         sessionStorage.setItem('user_type_search', user_type);
     }
+
+    // Set the flag to true as we're starting an AJAX call
+    search_accounts_ajax_in_progress = true;
+
     $.ajax({
         url:'../../process/user/pagination/page2_p.php',
         type:'POST',
@@ -204,11 +216,19 @@ const search_accounts = (current_page, order_by_code) =>{
             current_page:current_page,
             order_by_code:order_by_code
         },
-        beforeSend: () => {
+        beforeSend: (jqXHR, settings) => {
+            document.getElementById("btnPrevPage").setAttribute('disabled', true);
+            document.getElementById("accounts_table_pagination").setAttribute('disabled', true);
+            document.getElementById("btnNextPage").setAttribute('disabled', true);
             var loading = `<tr><td colspan="6" style="text-align:center;"><div class="spinner-border text-dark" role="status"><span class="sr-only">Loading...</span></div></td></tr>`;
             document.getElementById("list_of_accounts").innerHTML = loading;
+            jqXHR.url = settings.url;
+            jqXHR.type = settings.type;
         }, 
         success:function(response){
+            document.getElementById("btnPrevPage").removeAttribute('disabled');
+            document.getElementById("accounts_table_pagination").removeAttribute('disabled');
+            document.getElementById("btnNextPage").removeAttribute('disabled');
             $('#list_of_accounts').html(response);
             sessionStorage.setItem('accounts_table_pagination', current_page);
 
@@ -338,7 +358,14 @@ const search_accounts = (current_page, order_by_code) =>{
             }
 
             count_accounts();
+            // Set the flag back to false as the AJAX call has completed
+            search_accounts_ajax_in_progress = false;
         }
+    }).fail((jqXHR, textStatus, errorThrown) => {
+        console.log(jqXHR);
+        console.log(`System Error : Call IT Personnel Immediately!!! They will fix it right away. Error: url: ${jqXHR.url}, method: ${jqXHR.type} ( HTTP ${jqXHR.status} - ${jqXHR.statusText} ) Press F12 to see Console Log for more info.`);
+        // Set the flag back to false as the AJAX call has completed
+        search_accounts_ajax_in_progress = false;
     });
 }
 </script>
