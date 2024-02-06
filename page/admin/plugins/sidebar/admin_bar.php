@@ -23,22 +23,29 @@
         <!-- Add icons to the links using the .nav-icon class
              with font-awesome or any other icon font library -->
         <li class="nav-item">
+          <?php if ($_SERVER['REQUEST_URI'] == "/web_template/page/admin/dashboard.php") {?>
+          <a href="dashboard.php" class="nav-link active">
+          <?php } else {?>
           <a href="dashboard.php" class="nav-link">
+          <?php } ?>
             <i class="nav-icon fas fa-bus"></i>
             <p>
-             Dashboard
+              Dashboard
             </p>
           </a>
         </li>
         <li class="nav-item">
+          <?php if ($_SERVER['REQUEST_URI'] == "/web_template/page/admin/accounts.php") {?>
           <a href="accounts.php" class="nav-link active">
+          <?php } else {?>
+          <a href="accounts.php" class="nav-link">
+          <?php } ?>
             <i class="nav-icon fas fa-user-cog"></i>
             <p>
               Account Management
-             
             </p>
           </a>
-        </li> 
+        </li>
         <?php include 'logout.php';?>
       </ul>
     </nav>
