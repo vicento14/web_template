@@ -364,6 +364,9 @@ const search_accounts = (current_page, order_by_code) =>{
     }).fail((jqXHR, textStatus, errorThrown) => {
         console.log(jqXHR);
         console.log(`System Error : Call IT Personnel Immediately!!! They will fix it right away. Error: url: ${jqXHR.url}, method: ${jqXHR.type} ( HTTP ${jqXHR.status} - ${jqXHR.statusText} ) Press F12 to see Console Log for more info.`);
+        document.getElementById("btnPrevPage").removeAttribute('disabled');
+        document.getElementById("accounts_table_pagination").removeAttribute('disabled');
+        document.getElementById("btnNextPage").removeAttribute('disabled');
         // Set the flag back to false as the AJAX call has completed
         search_accounts_ajax_in_progress = false;
     });
