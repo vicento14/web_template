@@ -1,5 +1,5 @@
 <?php include 'plugins/navbar.php';?>
-<?php include 'plugins/sidebar/accounts_bar.php';?>
+<?php include 'plugins/sidebar/admin_bar.php';?>
 
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">

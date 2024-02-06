@@ -23,7 +23,11 @@
         <!-- Add icons to the links using the .nav-icon class
              with font-awesome or any other icon font library -->
         <li class="nav-item">
+          <?php if ($_SERVER['REQUEST_URI'] == "/web_template/page/user/pagination.php") {?>
+          <a href="pagination.php" class="nav-link active">
+          <?php } else {?>
           <a href="pagination.php" class="nav-link">
+          <?php } ?>
             <i class="nav-icon far fa-file-alt"></i>
             <p>
               Pagination
@@ -31,7 +35,11 @@
           </a>
         </li> 
         <li class="nav-item">
+          <?php if ($_SERVER['REQUEST_URI'] == "/web_template/page/user/load_more.php") {?>
+          <a href="load_more.php" class="nav-link active">
+          <?php } else {?>
           <a href="load_more.php" class="nav-link">
+          <?php } ?>
             <i class="nav-icon far fa-file-alt"></i>
             <p>
               Load More
@@ -39,7 +47,11 @@
           </a>
         </li> 
         <li class="nav-item">
+          <?php if ($_SERVER['REQUEST_URI'] == "/web_template/page/user/table_switching.php") {?>
+          <a href="table_switching.php" class="nav-link active">
+          <?php } else {?>
           <a href="table_switching.php" class="nav-link">
+          <?php } ?>
             <i class="nav-icon far fa-file-alt"></i>
             <p>
               Table Switching
@@ -47,7 +59,11 @@
           </a>
         </li> 
         <li class="nav-item">
+          <?php if ($_SERVER['REQUEST_URI'] == "/web_template/page/user/keyup_search.php") {?>
           <a href="keyup_search.php" class="nav-link active">
+          <?php } else {?>
+          <a href="keyup_search.php" class="nav-link">
+          <?php } ?>
             <i class="nav-icon far fa-file-alt"></i>
             <p>
               Keyup Search

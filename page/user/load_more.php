@@ -1,5 +1,5 @@
 <?php include 'plugins/navbar.php';?>
-<?php include 'plugins/sidebar/load_more_bar.php';?>
+<?php include 'plugins/sidebar/user_bar.php';?>
 
 <div class="content-wrapper">
   <!-- Content Header (Page header) -->
