@@ -109,7 +109,7 @@ const search_accounts = current_page =>{
             employee_no:employee_no,
             current_page:current_page
         },
-        beforeSend: () => {
+        beforeSend: (jqXHR, settings) => {
             document.getElementById("btnNextPage").setAttribute('disabled', true);
             var loading = `<tr id="loading"><td colspan="6" style="text-align:center;"><div class="spinner-border text-dark" role="status"><span class="sr-only">Loading...</span></div></td></tr>`;
             if (current_page == 1) {
@@ -117,6 +117,8 @@ const search_accounts = current_page =>{
             } else {
                 $('#accounts_table tbody').append(loading);
             }
+            jqXHR.url = settings.url;
+            jqXHR.type = settings.type;
         }, 
         success:function(response){
             $('#loading').remove();
