@@ -10,7 +10,12 @@
 <!-- AdminLTE App -->
 <script src="../../dist/js/adminlte.min.js"></script>
 
-<noscript>We are facing Script issues. Kindly enable JavaScript</noscript>
+<noscript>
+    <br>
+    <span>We are facing <strong>Script</strong> issues. Kindly enable <strong>JavaScript</strong>!!!</span>
+    <br>
+    <span>Call IT Personnel Immediately!!! They will fix it right away.</span>
+</noscript>
 
 </body>
 </html>
