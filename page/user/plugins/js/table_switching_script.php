@@ -1,5 +1,6 @@
 <script type="text/javascript">
-    $(document).ready(function () {
+    // DOMContentLoaded function
+	document.addEventListener("DOMContentLoaded", () => {
         load_t_t1();
     });
 
