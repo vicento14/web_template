@@ -2,13 +2,29 @@
     // AJAX IN PROGRESS GLOBAL VARS
     var search_accounts_ajax_in_progress = false;
 
-    $(document).ready(function () {
+    // DOMContentLoaded function
+	document.addEventListener("DOMContentLoaded", () => {
         search_accounts(1);
     });
 
-    document.getElementById("employee_no_search").addEventListener("keyup", e => {
-        search_accounts(1);
+    var typingTimerEmployeeNoSearch; // Timer identifier Employee No Search
+    var doneTypingInterval = 250; // Time in ms
+
+    // On keyup, start the countdown
+    document.getElementById("employee_no_search").addEventListener('keyup', e => {
+        clearTimeout(typingTimerEmployeeNoSearch);
+        typingTimerEmployeeNoSearch = setTimeout(doneTypingSearchAccounts, doneTypingInterval);
     });
+
+    // On keydown, clear the countdown
+    document.getElementById("employee_no_search").addEventListener('keydown', e => {
+        clearTimeout(typingTimerEmployeeNoSearch);
+    });
+
+    // User is "finished typing," do something
+    function doneTypingSearchAccounts() {
+        search_accounts(1);
+    }
 
     const get_next_page = () => {
         var current_page = parseInt(sessionStorage.getItem('accounts_table_pagination'));

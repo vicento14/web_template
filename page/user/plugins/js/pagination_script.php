@@ -2,7 +2,8 @@
     // AJAX IN PROGRESS GLOBAL VARS
     var search_accounts_ajax_in_progress = false;
 
-    $(document).ready(function () {
+    // DOMContentLoaded function
+	document.addEventListener("DOMContentLoaded", () => {
         search_accounts(1, 0);
     });
 

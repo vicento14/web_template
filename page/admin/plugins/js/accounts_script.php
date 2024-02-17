@@ -1,5 +1,6 @@
 <script type="text/javascript">
-    $(document).ready(function () {
+    // DOMContentLoaded function
+	document.addEventListener("DOMContentLoaded", () => {
         load_accounts();
         load_accounts2();
     });
@@ -41,6 +42,11 @@
         });
     }
 
+    document.getElementById('new_account_form').addEventListener('submit', e => {
+        e.preventDefault();
+        register_accounts();
+    });
+
     const register_accounts = () => {
         var employee_no = document.getElementById('employee_no').value;
         var full_name = document.getElementById('full_name').value;
@@ -48,105 +54,56 @@
         var password = document.getElementById('password').value;
         var section = document.getElementById('section').value;
         var user_type = document.getElementById('user_type').value;
-        if (employee_no == '') {
-            Swal.fire({
-                icon: 'info',
-                title: 'Please Input Employee No !!!',
-                text: 'Information',
-                showConfirmButton: false,
-                timer: 1000
-            });
-        } else if (full_name == '') {
-            Swal.fire({
-                icon: 'info',
-                title: 'Please Input Full Name !!!',
-                text: 'Information',
-                showConfirmButton: false,
-                timer: 1000
-            });
-        } else if (username == '') {
-            Swal.fire({
-                icon: 'info',
-                title: 'Please Input Username !!!',
-                text: 'Information',
-                showConfirmButton: false,
-                timer: 1000
-            });
-        } else if (password == '') {
-            Swal.fire({
-                icon: 'info',
-                title: 'Please Input Password !!!',
-                text: 'Information',
-                showConfirmButton: false,
-                timer: 1000
-            });
-        } else if (section == '') {
-            Swal.fire({
-                icon: 'info',
-                title: 'Please Input Section !!!',
-                text: 'Information',
-                showConfirmButton: false,
-                timer: 1000
-            });
-        } else if (user_type == '') {
-            Swal.fire({
-                icon: 'info',
-                title: 'Please Select User Type !!!',
-                text: 'Information',
-                showConfirmButton: false,
-                timer: 1000
-            });
-        } else {
-            $.ajax({
-                url: '../../process/admin/accounts/acct-management_p.php',
-                type: 'POST',
-                cache: false,
-                data: {
-                    method: 'register_account',
-                    employee_no: employee_no,
-                    full_name: full_name,
-                    username: username,
-                    password: password,
-                    section: section,
-                    user_type: user_type
-                }, success: function (response) {
-                    if (response == 'success') {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Succesfully Recorded!!!',
-                            text: 'Success',
-                            showConfirmButton: false,
-                            timer: 1000
-                        });
-                        document.getElementById("employee_no").value = '';
-                        document.getElementById("full_name").value = '';
-                        document.getElementById("username").value = '';
-                        document.getElementById("password").value = '';
-                        document.getElementById("section").value = '';
-                        document.getElementById("user_type").value = '';
-                        load_accounts();
-                        load_accounts2();
-                        $('#new_account').modal('hide');
-                    } else if (response == 'Already Exist') {
-                        Swal.fire({
-                            icon: 'info',
-                            title: 'Duplicate Data !!!',
-                            text: 'Information',
-                            showConfirmButton: false,
-                            timer: 1000
-                        });
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error !!!',
-                            text: 'Error',
-                            showConfirmButton: false,
-                            timer: 1000
-                        });
-                    }
+        
+        $.ajax({
+            url: '../../process/admin/accounts/acct-management_p.php',
+            type: 'POST',
+            cache: false,
+            data: {
+                method: 'register_account',
+                employee_no: employee_no,
+                full_name: full_name,
+                username: username,
+                password: password,
+                section: section,
+                user_type: user_type
+            }, success: function (response) {
+                if (response == 'success') {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Succesfully Recorded!!!',
+                        text: 'Success',
+                        showConfirmButton: false,
+                        timer: 1000
+                    });
+                    document.getElementById("employee_no").value = '';
+                    document.getElementById("full_name").value = '';
+                    document.getElementById("username").value = '';
+                    document.getElementById("password").value = '';
+                    document.getElementById("section").value = '';
+                    document.getElementById("user_type").value = '';
+                    load_accounts();
+                    load_accounts2();
+                    $('#new_account').modal('hide');
+                } else if (response == 'Already Exist') {
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Duplicate Data !!!',
+                        text: 'Information',
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error !!!',
+                        text: 'Error',
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
                 }
-            });
-        }
+            }
+        });
     }
 
     const get_accounts_details = (param) => {
@@ -167,6 +124,26 @@
         document.getElementById('section_update').value = section;
         document.getElementById('user_type_update').value = role;
     }
+
+    // Get the form element
+    var update_account_form = document.getElementById('update_account_form');
+
+    // Add a submit event listener to the form
+    update_account_form.addEventListener('submit', e => {
+        e.preventDefault();
+
+        // Get the button that triggered the submit event
+        var button = document.activeElement;
+
+        // Check the id or name of the button
+        if (button.id === 'btnUpdateAccount') {
+            // Call the function for the first submit button
+            update_account();
+        } else if (button.id === 'btnDeleteAccount') {
+            // Call the function for the first submit button
+            delete_account();
+        }
+    });
 
     const update_account = () => {
         var id = document.getElementById('id_account_update').value;
@@ -214,7 +191,7 @@
                         title: 'Duplicate Data !!!',
                         text: 'Information',
                         showConfirmButton: false,
-                        timer: 1000
+                        timer: 2000
                     });
                 } else {
                     Swal.fire({
@@ -222,7 +199,7 @@
                         title: 'Error !!!',
                         text: 'Error',
                         showConfirmButton: false,
-                        timer: 1000
+                        timer: 2000
                     });
                 }
             }
@@ -262,7 +239,7 @@
                         title: 'Error !!!',
                         text: 'Error',
                         showConfirmButton: false,
-                        timer: 1000
+                        timer: 2000
                     });
                 }
             }

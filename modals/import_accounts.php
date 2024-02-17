@@ -1,4 +1,5 @@
-<div class="modal fade" id="import_accounts" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="import_accounts" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true" data-backdrop="static" data-keyboard="false">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -7,7 +8,7 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <form action="../../process/import/imp_accounts.php"  enctype="multipart/form-data" method="POST">
+      <form action="../../process/import/imp_accounts.php" enctype="multipart/form-data" method="POST">
         <div class="modal-body">
           <label>File:</label>
           <input type="file" name="file" class="form-control-lg" accept=".csv">
