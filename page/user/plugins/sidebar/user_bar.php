@@ -59,6 +59,18 @@
           </a>
         </li> 
         <li class="nav-item">
+          <?php if ($_SERVER['REQUEST_URI'] == "/web_template/page/user/ts_lm.php") {?>
+          <a href="ts_lm.php" class="nav-link active">
+          <?php } else {?>
+          <a href="ts_lm.php" class="nav-link">
+          <?php } ?>
+            <i class="nav-icon far fa-file-alt"></i>
+            <p>
+              Table Switch + Load More
+            </p>
+          </a>
+        </li> 
+        <li class="nav-item">
           <?php if ($_SERVER['REQUEST_URI'] == "/web_template/page/user/keyup_search.php") {?>
           <a href="keyup_search.php" class="nav-link active">
           <?php } else {?>
