@@ -8,9 +8,10 @@ if (isset($_POST['Login'])) {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    $sql = "SELECT full_name, section, role FROM user_accounts WHERE BINARY username = '$username' AND BINARY password = '$password'";
+    $sql = "SELECT full_name, section, role FROM user_accounts WHERE BINARY username = ? AND BINARY password = ?";
     $stmt = $conn->prepare($sql);
-    $stmt->execute();
+    $params = array($username, $password);
+    $stmt->execute($params);
     if ($stmt->rowCount() > 0) {
         foreach($stmt->fetchALL() as $x){
             $name = $x['full_name'];
