@@ -448,7 +448,7 @@
                                 timer: 1000
                             });
                             load_accounts();
-                            $('#update_account').modal('hide');
+                            $('#confirm_delete_account_selected').modal('hide');
                         } else {
                             Swal.fire({
                                 icon: 'error',
