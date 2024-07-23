@@ -2,12 +2,10 @@
 
 if (isset($_SESSION['username'])) {
   if ($_SESSION['role'] == 'admin') {
-     header('location: page/admin/dashboard.php');
-     exit;
- }elseif($_SESSION['role'] == 'user'){
-     header('location: page/user/pagination.php');
-     exit;
- }
+    header('location: page/admin/dashboard.php');
+  } elseif($_SESSION['role'] == 'user') {
+    header('location: page/user/pagination.php');
+  }
 }
 ?>
 <!DOCTYPE html>

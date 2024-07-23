@@ -1,19 +1,39 @@
 <?php 
-include '../../conn.php';
+require '../../DatabaseConnections.php';
 
 $method = $_POST['method'];
 
-function count_account_list($search_arr, $conn) {
-	$query = "SELECT count(id) AS total FROM user_accounts WHERE id_number LIKE '".$search_arr['employee_no']."%' AND full_name LIKE '".$search_arr['full_name']."%' AND role LIKE '".$search_arr['user_type']."%'";
-	$stmt = $conn->prepare($query);
-	$stmt->execute();
-	if ($stmt->rowCount() > 0) {
-		foreach($stmt->fetchALL() as $j){
-			$total = $j['total'];
+function count_account_list($search_arr, $db) {
+	// Connection Object
+    $conn = null;
+
+    // Connection Open
+    $connectionArr = $db->connect();
+
+    if ($connectionArr['connected'] == 1) {
+        $conn = $connectionArr['connection'];
+
+		$query = "SELECT count(id) AS total 
+				FROM user_accounts 
+				WHERE id_number LIKE '".$search_arr['employee_no']."%' 
+				AND full_name LIKE '".$search_arr['full_name']."%' 
+				AND role LIKE '".$search_arr['user_type']."%'";
+		$stmt = $conn->prepare($query);
+		$stmt->execute();
+		if ($stmt->rowCount() > 0) {
+			foreach ($stmt->fetchALL() as $row) {
+				$total = $row['total'];
+			}
+		} else {
+			$total = 0;
 		}
-	}else{
-		$total = 0;
-	}
+	} else {
+        echo $connectionArr['title'] . " " . $connectionArr['message'];
+    }
+
+    // Connection Close
+    $conn = null;
+
 	return $total;
 }
 
@@ -28,7 +48,7 @@ if ($method == 'count_account_list') {
 		"user_type" => $user_type
 	);
 
-	echo count_account_list($search_arr, $conn);
+	echo count_account_list($search_arr, $db);
 }
 
 if ($method == 'account_list') {
@@ -42,26 +62,42 @@ if ($method == 'account_list') {
 
 	$c = $page_first_result;
 
-	$query = "SELECT * FROM user_accounts LIMIT ".$page_first_result.", ".$results_per_page;
-	$stmt = $conn->prepare($query);
-	$stmt->execute();
-	if ($stmt->rowCount() > 0) {
-		foreach($stmt->fetchALL() as $j){
-			$c++;
-			echo '<tr>';
+	// Connection Object
+    $conn = null;
+
+    // Connection Open
+    $connectionArr = $db->connect();
+
+    if ($connectionArr['connected'] == 1) {
+        $conn = $connectionArr['connection'];
+
+		$query = "SELECT * FROM user_accounts 
+					LIMIT ".$page_first_result.", ".$results_per_page;
+		$stmt = $conn->prepare($query);
+		$stmt->execute();
+		if ($stmt->rowCount() > 0) {
+			foreach ($stmt->fetchALL() as $row) {
+				$c++;
+				echo '<tr>';
 				echo '<td>'.$c.'</td>';
-				echo '<td>'.$j['id_number'].'</td>';
-				echo '<td>'.$j['username'].'</td>';
-				echo '<td>'.$j['full_name'].'</td>';
-				echo '<td>'.$j['section'].'</td>';
-				echo '<td>'.strtoupper($j['role']).'</td>';
+				echo '<td>'.$row['id_number'].'</td>';
+				echo '<td>'.$row['username'].'</td>';
+				echo '<td>'.$row['full_name'].'</td>';
+				echo '<td>'.$row['section'].'</td>';
+				echo '<td>'.strtoupper($row['role']).'</td>';
+				echo '</tr>';
+			}
+		} else {
+			echo '<tr>';
+			echo '<td colspan="6" style="text-align:center; color:red;">No Result !!!</td>';
 			echo '</tr>';
 		}
-	}else{
-		echo '<tr>';
-			echo '<td colspan="6" style="text-align:center; color:red;">No Result !!!</td>';
-		echo '</tr>';
-	}
+	} else {
+        echo $connectionArr['title'] . " " . $connectionArr['message'];
+    }
+
+    // Connection Close
+    $conn = null;
 }
 
 if ($method == 'account_list_pagination') {
@@ -77,7 +113,7 @@ if ($method == 'account_list_pagination') {
 
 	$results_per_page = 10;
 
-	$number_of_result = intval(count_account_list($search_arr, $conn));
+	$number_of_result = intval(count_account_list($search_arr, $db));
 
 	//determine the total number of pages available  
 	$number_of_page = ceil($number_of_result / $results_per_page);
@@ -103,14 +139,16 @@ if ($method == 'search_account_list') {
 		"user_type" => $user_type
 	);
 
-	$number_of_result = intval(count_account_list($search_arr, $conn));
+	$number_of_result = intval(count_account_list($search_arr, $db));
 
 	$results_per_page = 10;
 
 	//determine the sql LIMIT starting number for the results on the displaying page
 	$page_first_result = ($current_page-1) * $results_per_page;
 
-	$query = "SELECT * FROM user_accounts WHERE id_number LIKE '$employee_no%' AND full_name LIKE '$full_name%' AND role LIKE '$user_type%'";
+	$query = "SELECT * FROM user_accounts 
+				WHERE id_number LIKE '$employee_no%' 
+				AND full_name LIKE '$full_name%' AND role LIKE '$user_type%'";
 
 	// Table Header Sort Behavior
 	switch ($order_by_code) {
@@ -166,46 +204,59 @@ if ($method == 'search_account_list') {
 	}
 
 	$query = $query . " LIMIT ".$page_first_result.", ".$results_per_page;
-	$stmt = $conn->prepare($query);
-	$stmt->execute();
 
-	if ($stmt->rowCount() > 0) {
-		foreach($stmt->fetchALL() as $j){
-			// Table Header Sort Behavior
-			switch ($order_by_code) {
-				case 0:
-				case 2:
-				case 4:
-				case 6:
-				case 8:
-				case 10:
-					$c++;
-					break;
-				case 1:
-				case 3:
-				case 5:
-				case 7:
-				case 9:
-				case 11:
-					$c--;
-					break;
-				default:
-			}
-			echo '<tr>';
+	// Connection Object
+    $conn = null;
+
+    // Connection Open
+    $connectionArr = $db->connect();
+
+    if ($connectionArr['connected'] == 1) {
+        $conn = $connectionArr['connection'];
+
+		$stmt = $conn->prepare($query);
+		$stmt->execute();
+
+		if ($stmt->rowCount() > 0) {
+			foreach ($stmt->fetchALL() as $row) {
+				// Table Header Sort Behavior
+				switch ($order_by_code) {
+					case 0:
+					case 2:
+					case 4:
+					case 6:
+					case 8:
+					case 10:
+						$c++;
+						break;
+					case 1:
+					case 3:
+					case 5:
+					case 7:
+					case 9:
+					case 11:
+						$c--;
+						break;
+					default:
+				}
+				echo '<tr>';
 				echo '<td>'.$c.'</td>';
-				echo '<td>'.$j['id_number'].'</td>';
-				echo '<td>'.$j['username'].'</td>';
-				echo '<td>'.$j['full_name'].'</td>';
-				echo '<td>'.$j['section'].'</td>';
-				echo '<td>'.strtoupper($j['role']).'</td>';
+				echo '<td>'.$row['id_number'].'</td>';
+				echo '<td>'.$row['username'].'</td>';
+				echo '<td>'.$row['full_name'].'</td>';
+				echo '<td>'.$row['section'].'</td>';
+				echo '<td>'.strtoupper($row['role']).'</td>';
+				echo '</tr>';
+			}
+		} else {
+			echo '<tr>';
+			echo '<td colspan="6" style="text-align:center; color:red;">No Result !!!</td>';
 			echo '</tr>';
 		}
-	}else{
-		echo '<tr>';
-			echo '<td colspan="6" style="text-align:center; color:red;">No Result !!!</td>';
-		echo '</tr>';
-	}
-}
+	} else {
+        echo $connectionArr['title'] . " " . $connectionArr['message'];
+    }
 
-$conn = NULL;
-?>
+    // Connection Close
+    $conn = null;
+}

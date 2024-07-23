@@ -1,19 +1,37 @@
 <?php 
-include '../../conn.php';
+require '../../DatabaseConnections.php';
 
 $method = $_POST['method'];
 
-function count_account_list($search_arr, $conn) {
-	$query = "SELECT count(id) AS total FROM user_accounts WHERE id_number LIKE '".$search_arr['employee_no']."%'";
-	$stmt = $conn->prepare($query);
-	$stmt->execute();
-	if ($stmt->rowCount() > 0) {
-		foreach($stmt->fetchALL() as $j){
-			$total = $j['total'];
+function count_account_list($search_arr, $db) {
+	// Connection Object
+    $conn = null;
+
+    // Connection Open
+    $connectionArr = $db->connect();
+
+    if ($connectionArr['connected'] == 1) {
+        $conn = $connectionArr['connection'];
+
+		$query = "SELECT count(id) AS total FROM user_accounts 
+				WHERE id_number LIKE '".$search_arr['employee_no']."%'";
+		$stmt = $conn->prepare($query);
+		$stmt->execute();
+		if ($stmt->rowCount() > 0) {
+			foreach($stmt->fetchALL() as $row) {
+				$total = $row['total'];
+			}
+		} else {
+			$total = 0;
 		}
-	}else{
+	} else {
+        echo $connectionArr['title'] . " " . $connectionArr['message'];
 		$total = 0;
-	}
+    }
+
+    // Connection Close
+    $conn = null;
+
 	return $total;
 }
 
@@ -24,7 +42,7 @@ if ($method == 'count_account_list') {
 		"employee_no" => $employee_no
 	);
 
-	echo count_account_list($search_arr, $conn);
+	echo count_account_list($search_arr, $db);
 }
 
 if ($method == 'account_list') {
@@ -38,26 +56,41 @@ if ($method == 'account_list') {
 
 	$c = $page_first_result;
 
-	$query = "SELECT * FROM user_accounts LIMIT ".$page_first_result.", ".$results_per_page;
-	$stmt = $conn->prepare($query);
-	$stmt->execute();
-	if ($stmt->rowCount() > 0) {
-		foreach($stmt->fetchALL() as $j){
-			$c++;
-			echo '<tr>';
+	// Connection Object
+    $conn = null;
+
+    // Connection Open
+    $connectionArr = $db->connect();
+
+    if ($connectionArr['connected'] == 1) {
+        $conn = $connectionArr['connection'];
+
+		$query = "SELECT * FROM user_accounts LIMIT ".$page_first_result.", ".$results_per_page;
+		$stmt = $conn->prepare($query);
+		$stmt->execute();
+		if ($stmt->rowCount() > 0) {
+			foreach ($stmt->fetchALL() as $row) {
+				$c++;
+				echo '<tr>';
 				echo '<td>'.$c.'</td>';
-				echo '<td>'.$j['id_number'].'</td>';
-				echo '<td>'.$j['username'].'</td>';
-				echo '<td>'.$j['full_name'].'</td>';
-				echo '<td>'.$j['section'].'</td>';
-				echo '<td>'.strtoupper($j['role']).'</td>';
+				echo '<td>'.$row['id_number'].'</td>';
+				echo '<td>'.$row['username'].'</td>';
+				echo '<td>'.$row['full_name'].'</td>';
+				echo '<td>'.$row['section'].'</td>';
+				echo '<td>'.strtoupper($row['role']).'</td>';
+				echo '</tr>';
+			}
+		} else {
+			echo '<tr>';
+			echo '<td colspan="6" style="text-align:center; color:red;">No Result !!!</td>';
 			echo '</tr>';
 		}
-	}else{
-		echo '<tr>';
-			echo '<td colspan="6" style="text-align:center; color:red;">No Result !!!</td>';
-		echo '</tr>';
-	}
+	} else {
+        echo $connectionArr['title'] . " " . $connectionArr['message'];
+    }
+
+    // Connection Close
+    $conn = null;
 }
 
 if ($method == 'account_list_pagination') {
@@ -69,7 +102,7 @@ if ($method == 'account_list_pagination') {
 
 	$results_per_page = 10;
 
-	$number_of_result = intval(count_account_list($search_arr, $conn));
+	$number_of_result = intval(count_account_list($search_arr, $db));
 
 	//determine the total number of pages available  
 	$number_of_page = ceil($number_of_result / $results_per_page);
@@ -89,7 +122,7 @@ if ($method == 'account_list_last_page') {
 
 	$results_per_page = 10;
 
-	$number_of_result = intval(count_account_list($search_arr, $conn));
+	$number_of_result = intval(count_account_list($search_arr, $db));
 
 	//determine the total number of pages available  
 	$number_of_page = ceil($number_of_result / $results_per_page);
@@ -111,36 +144,48 @@ if ($method == 'search_account_list') {
 
 	$c = $page_first_result;
 
-	$query = "SELECT * FROM user_accounts WHERE id_number LIKE '$employee_no%' LIMIT ".$page_first_result.", ".$results_per_page;
-	$stmt = $conn->prepare($query);
-	$stmt->execute();
-	// GET QUERY COLUMN RESULT
-	// if ($stmt->columnCount() > 0) {
-	// 	echo '<tr>';
-	// 	for ($i = 0; $i < $stmt->columnCount(); $i++) {
-	// 		$col = $stmt->getColumnMeta($i); // 0 indexed so 0 would be first column
-	// 		echo '<th>'.$col['name'].'</th>';
-	// 	}
-	// 	echo '</tr>';
-	// }
-	if ($stmt->rowCount() > 0) {
-		foreach($stmt->fetchALL() as $j){
-			$c++;
-			echo '<tr>';
+	// Connection Object
+    $conn = null;
+
+    // Connection Open
+    $connectionArr = $db->connect();
+
+    if ($connectionArr['connected'] == 1) {
+        $conn = $connectionArr['connection'];
+
+		$query = "SELECT * FROM user_accounts WHERE id_number LIKE '$employee_no%' LIMIT ".$page_first_result.", ".$results_per_page;
+		$stmt = $conn->prepare($query);
+		$stmt->execute();
+		// GET QUERY COLUMN RESULT
+		// if ($stmt->columnCount() > 0) {
+		// 	echo '<tr>';
+		// 	for ($i = 0; $i < $stmt->columnCount(); $i++) {
+		// 		$col = $stmt->getColumnMeta($i); // 0 indexed so 0 would be first column
+		// 		echo '<th>'.$col['name'].'</th>';
+		// 	}
+		// 	echo '</tr>';
+		// }
+		if ($stmt->rowCount() > 0) {
+			foreach ($stmt->fetchALL() as $row) {
+				$c++;
+				echo '<tr>';
 				echo '<td>'.$c.'</td>';
-				echo '<td>'.$j['id_number'].'</td>';
-				echo '<td>'.$j['username'].'</td>';
-				echo '<td>'.$j['full_name'].'</td>';
-				echo '<td>'.$j['section'].'</td>';
-				echo '<td>'.strtoupper($j['role']).'</td>';
+				echo '<td>'.$row['id_number'].'</td>';
+				echo '<td>'.$row['username'].'</td>';
+				echo '<td>'.$row['full_name'].'</td>';
+				echo '<td>'.$row['section'].'</td>';
+				echo '<td>'.strtoupper($row['role']).'</td>';
+				echo '</tr>';
+			}
+		} else {
+			echo '<tr>';
+			echo '<td colspan="6" style="text-align:center; color:red;">No Result !!!</td>';
 			echo '</tr>';
 		}
-	}else{
-		echo '<tr>';
-			echo '<td colspan="6" style="text-align:center; color:red;">No Result !!!</td>';
-		echo '</tr>';
-	}
-}
+	} else {
+        echo $connectionArr['title'] . " " . $connectionArr['message'];
+    }
 
-$conn = NULL;
-?>
+    // Connection Close
+    $conn = null;
+}

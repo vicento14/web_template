@@ -1,42 +1,76 @@
 <?php
-include '../../conn.php';
+require '../../DatabaseConnections.php';
 
 $method = $_POST['method'];
 
-function count_t_t1_data($conn)
+function count_t_t1_data($db)
 {
-    $query = "SELECT count(id) AS total FROM t_t1";
-    $stmt = $conn->prepare($query, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-    $stmt->execute();
-    if ($stmt->rowCount() > 0) {
-        foreach ($stmt->fetchALL() as $row) {
-            $total = $row['total'];
+    // Connection Object
+    $conn = null;
+
+    // Connection Open
+    $connectionArr = $db->connect();
+
+    if ($connectionArr['connected'] == 1) {
+        $conn = $connectionArr['connection'];
+
+        $query = "SELECT count(id) AS total FROM t_t1";
+        $stmt = $conn->prepare($query, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+        $stmt->execute();
+        if ($stmt->rowCount() > 0) {
+            foreach ($stmt->fetchALL() as $row) {
+                $total = $row['total'];
+            }
+        } else {
+            $total = 0;
         }
     } else {
+        echo $connectionArr['title'] . " " . $connectionArr['message'];
         $total = 0;
     }
+
+    // Connection Close
+    $conn = null;
+
     return $total;
 }
 
-function count_t_t2_data($search_arr, $conn)
+function count_t_t2_data($search_arr, $db)
 {
-    $query = "SELECT count(id) AS total FROM t_t2 WHERE c1 = '" . $search_arr['c1'] . "'";
-    $stmt = $conn->prepare($query, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-    $stmt->execute();
-    if ($stmt->rowCount() > 0) {
-        foreach ($stmt->fetchALL() as $row) {
-            $total = $row['total'];
+    // Connection Object
+    $conn = null;
+
+    // Connection Open
+    $connectionArr = $db->connect();
+
+    if ($connectionArr['connected'] == 1) {
+        $conn = $connectionArr['connection'];
+
+        $query = "SELECT count(id) AS total FROM t_t2 WHERE c1 = '" . $search_arr['c1'] . "'";
+        $stmt = $conn->prepare($query, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+        $stmt->execute();
+        if ($stmt->rowCount() > 0) {
+            foreach ($stmt->fetchALL() as $row) {
+                $total = $row['total'];
+            }
+        } else {
+            $total = 0;
         }
     } else {
+        echo $connectionArr['title'] . " " . $connectionArr['message'];
         $total = 0;
     }
+
+    // Connection Close
+    $conn = null;
+
     return $total;
 }
 
 if ($method == 'load_t_t1_data_last_page') {
     $results_per_page = 10;
 
-    $number_of_result = intval(count_t_t1_data($conn));
+    $number_of_result = intval(count_t_t1_data($db));
 
     //determine the total number of pages available  
     $number_of_page = ceil($number_of_result / $results_per_page);
@@ -45,7 +79,7 @@ if ($method == 'load_t_t1_data_last_page') {
 }
 
 if ($method == 'count_t_t1_data') {
-    echo count_t_t1_data($conn);
+    echo count_t_t1_data($db);
 }
 
 if ($method == 'load_t_t1_data') {
@@ -59,28 +93,45 @@ if ($method == 'load_t_t1_data') {
 
     $c = $page_first_result;
 
-    $query = "SELECT * FROM t_t1 LIMIT " . $page_first_result . ", " . $results_per_page;
+    $query = "SELECT * FROM t_t1 
+                LIMIT " . $page_first_result . ", " . $results_per_page;
 
-    // 1st Approach using SQL Server DB when using Select Query
-    $stmt = $conn->prepare($query, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-    $stmt->execute();
-    if ($stmt->rowCount() > 0) {
-        foreach ($stmt->fetchALL() as $row) {
-            $c++;
-            echo '<tr style="cursor:pointer;" class="modal-trigger" onclick="load_t_t2(&quot;' . $row['id'] . '~!~' . $row['c1'] . '&quot;)">';
-            echo '<td>' . $c . '</td>';
-            echo '<td>' . $row['c1'] . '</td>';
-            echo '<td>' . $row['c2'] . '</td>';
-            echo '<td>' . $row['c3'] . '</td>';
-            echo '<td>' . $row['c4'] . '</td>';
-            echo '<td>' . $row['date_updated'] . '</td>';
+    // Connection Object
+    $conn = null;
+
+    // Connection Open
+    $connectionArr = $db->connect();
+
+    if ($connectionArr['connected'] == 1) {
+        $conn = $connectionArr['connection'];
+
+        // 1st Approach using SQL Server DB when using Select Query
+        $stmt = $conn->prepare($query, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+        $stmt->execute();
+        if ($stmt->rowCount() > 0) {
+            foreach ($stmt->fetchALL() as $row) {
+                $c++;
+                echo '<tr style="cursor:pointer;" class="modal-trigger" 
+                        onclick="load_t_t2(&quot;' . $row['id'] . '~!~' . $row['c1'] . '&quot;)">';
+                echo '<td>' . $c . '</td>';
+                echo '<td>' . $row['c1'] . '</td>';
+                echo '<td>' . $row['c2'] . '</td>';
+                echo '<td>' . $row['c3'] . '</td>';
+                echo '<td>' . $row['c4'] . '</td>';
+                echo '<td>' . $row['date_updated'] . '</td>';
+                echo '</tr>';
+            }
+        } else {
+            echo '<tr>';
+            echo '<td colspan="6" style="text-align:center; color:red;">No Result !!!</td>';
             echo '</tr>';
         }
     } else {
-        echo '<tr>';
-        echo '<td colspan="6" style="text-align:center; color:red;">No Result !!!</td>';
-        echo '</tr>';
+        echo $connectionArr['title'] . " " . $connectionArr['message'];
     }
+
+    // Connection Close
+    $conn = null;
 }
 
 if ($method == 'load_t_t2_data_last_page') {
@@ -92,7 +143,7 @@ if ($method == 'load_t_t2_data_last_page') {
 
     $results_per_page = 10;
 
-    $number_of_result = intval(count_t_t2_data($search_arr, $conn));
+    $number_of_result = intval(count_t_t2_data($search_arr, $db));
 
     //determine the total number of pages available  
     $number_of_page = ceil($number_of_result / $results_per_page);
@@ -107,7 +158,7 @@ if ($method == 'count_t_t2_data') {
         "c1" => $c1
     );
 
-    echo count_t_t2_data($search_arr, $conn);
+    echo count_t_t2_data($search_arr, $db);
 }
 
 if ($method == 'load_t_t2') {
@@ -123,29 +174,43 @@ if ($method == 'load_t_t2') {
 
     $c = $page_first_result;
 
-    $query = "SELECT * FROM t_t2 WHERE c1 = '$c1' LIMIT " . $page_first_result . ", " . $results_per_page;
+    $query = "SELECT * FROM t_t2 
+                WHERE c1 = '$c1' 
+                LIMIT " . $page_first_result . ", " . $results_per_page;
 
-    // 1st Approach using SQL Server DB when using Select Query
-    $stmt = $conn->prepare($query, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-    $stmt->execute();
-    if ($stmt->rowCount() > 0) {
-        foreach ($stmt->fetchALL() as $row) {
-            $c++;
+    // Connection Object
+    $conn = null;
+
+    // Connection Open
+    $connectionArr = $db->connect();
+
+    if ($connectionArr['connected'] == 1) {
+        $conn = $connectionArr['connection'];
+
+        // 1st Approach using SQL Server DB when using Select Query
+        $stmt = $conn->prepare($query, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+        $stmt->execute();
+        if ($stmt->rowCount() > 0) {
+            foreach ($stmt->fetchALL() as $row) {
+                $c++;
+                echo '<tr>';
+                echo '<td>' . $c . '</td>';
+                echo '<td>' . $row['c1'] . '</td>';
+                echo '<td>' . $row['d1'] . '</td>';
+                echo '<td>' . $row['d2'] . '</td>';
+                echo '<td>' . $row['d3'] . '</td>';
+                echo '<td>' . $row['date_updated'] . '</td>';
+                echo '</tr>';
+            }
+        } else {
             echo '<tr>';
-            echo '<td>' . $c . '</td>';
-            echo '<td>' . $row['c1'] . '</td>';
-            echo '<td>' . $row['d1'] . '</td>';
-            echo '<td>' . $row['d2'] . '</td>';
-            echo '<td>' . $row['d3'] . '</td>';
-            echo '<td>' . $row['date_updated'] . '</td>';
+            echo '<td colspan="6" style="text-align:center; color:red;">No Result !!!</td>';
             echo '</tr>';
         }
     } else {
-        echo '<tr>';
-        echo '<td colspan="6" style="text-align:center; color:red;">No Result !!!</td>';
-        echo '</tr>';
+        echo $connectionArr['title'] . " " . $connectionArr['message'];
     }
-}
 
-$conn = NULL;
-?>
+    // Connection Close
+    $conn = null;
+}
