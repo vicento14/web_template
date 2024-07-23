@@ -1,9 +1,10 @@
 <?php
 // error_reporting(0);
-require '../conn.php';
+require '../DatabaseConnections.php';
 
 $start_row = 1;
-$insertsql = "INSERT INTO user_accounts (id_number, full_name, username, password, section, role) VALUES";
+$insertsql = "INSERT INTO user_accounts 
+                (id_number, full_name, username, password, section, role) VALUES";
 $subsql = "";
 
 function count_row ($file) {
@@ -28,7 +29,7 @@ function removeBomUtf8($s){
     }
 }
 
-function check_csv($file, $conn) {
+function check_csv($file, $db) {
 
     //READ FILE
     $csv_file = fopen($file,'r');
@@ -69,7 +70,9 @@ function check_csv($file, $conn) {
             $role = $line[5];
             
             // CHECK IF BLANK DATA
-            if ($id_number == '' || $full_name == '' || $username == '' || $password == '' || $section == '' || $role == '') {
+            if ($id_number == '' || $full_name == '' || 
+                $username == '' || $password == '' || 
+                $section == '' || $role == '') {
                 // IF BLANK DETECTED ERROR += 1
                 $hasBlankError++;
                 $hasError = 1;
@@ -88,19 +91,33 @@ function check_csv($file, $conn) {
                 $dup_temp_arr[$whole_line] = 1;
             }
 
-            // CHECK ROWS IF EXISTS
-            $sql = "SELECT id FROM user_accounts 
-                    WHERE id_number = ? AND full_name = ? AND username = ? 
-                    AND section = ? AND role = ?";
-            $stmt = $conn->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
-            $params = array($id_number, $full_name, $username, $section, $role);
-            $stmt->execute($params);
-            if ($stmt->rowCount() > 0) {
-                $isExistsOnDb = 1;
-                $hasError = 1;
-                array_push($isExistsOnDbArr, $check_csv_row);
+            // Connection Object
+            $conn = null;
+
+            // Connection Open
+            $connectionArr = $db->connect();
+
+            if ($connectionArr['connected'] == 1) {
+                $conn = $connectionArr['connection'];
+
+                // CHECK ROWS IF EXISTS
+                $sql = "SELECT id FROM user_accounts 
+                        WHERE id_number = ? AND full_name = ? AND username = ? 
+                        AND section = ? AND role = ?";
+                $stmt = $conn->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL));
+                $params = array($id_number, $full_name, $username, $section, $role);
+                $stmt->execute($params);
+                if ($stmt->rowCount() > 0) {
+                    $isExistsOnDb = 1;
+                    $hasError = 1;
+                    array_push($isExistsOnDbArr, $check_csv_row);
+                }
+            } else {
+                $message = $message . $connectionArr['title'] . " " . $connectionArr['message'];
             }
-            
+        
+            // Connection Close
+            $conn = null;
         }
     } else {
         $message = $message . 'Invalid CSV Table Header. Maybe an incorrect CSV file or incorrect CSV header ';
@@ -122,7 +139,19 @@ function check_csv($file, $conn) {
     return $message;
 }
 
-$mimes = array('text/x-comma-separated-values', 'text/comma-separated-values', 'application/octet-stream', 'application/vnd.ms-excel', 'application/x-csv', 'text/x-csv', 'text/csv', 'application/csv', 'application/excel', 'application/vnd.msexcel', 'text/plain');
+$mimes = array(
+    'text/x-comma-separated-values', 
+    'text/comma-separated-values', 
+    'application/octet-stream', 
+    'application/vnd.ms-excel', 
+    'application/x-csv', 
+    'text/x-csv', 
+    'text/csv', 
+    'application/csv', 
+    'application/excel', 
+    'application/vnd.msexcel', 
+    'text/plain'
+);
 
 if (!empty($_FILES['file']['name'])) {
 
@@ -132,7 +161,7 @@ if (!empty($_FILES['file']['name'])) {
 
             $row_count = count_row($_FILES['file']['tmp_name']);
 
-            $chkCsvMsg = check_csv($_FILES['file']['tmp_name'], $conn);
+            $chkCsvMsg = check_csv($_FILES['file']['tmp_name'], $db);
 
             if ($chkCsvMsg == '') {
                 
@@ -160,16 +189,50 @@ if (!empty($_FILES['file']['name'])) {
                             $subsql = substr($subsql, 0, strlen($subsql) - 3);
                             $insertsql = $insertsql . $subsql . ";";
                             $insertsql = substr($insertsql, 0, strlen($insertsql));
-                            $stmt = $conn->prepare($insertsql);
-                            $stmt->execute();
-                            $insertsql = "INSERT INTO user_accounts (id_number, full_name, username, password, section, role) VALUES ";
+
+                            // Connection Object
+                            $conn = null;
+
+                            // Connection Open
+                            $connectionArr = $db->connect();
+
+                            if ($connectionArr['connected'] == 1) {
+                                $conn = $connectionArr['connection'];
+
+                                $stmt = $conn->prepare($insertsql);
+                                $stmt->execute();
+                            } else {
+                                echo $connectionArr['title'] . " " . $connectionArr['message'];
+                            }
+                        
+                            // Connection Close
+                            $conn = null;
+
+                            $insertsql = "INSERT INTO user_accounts 
+                                            (id_number, full_name, username, password, section, role) VALUES ";
                             $subsql = "";
                         } else if ($temp_count == $row_count) {
                             $subsql = substr($subsql, 0, strlen($subsql) - 3);
                             $insertsql2 = $insertsql . $subsql . ";";
                             $insertsql2 = substr($insertsql2, 0, strlen($insertsql2));
-                            $stmt = $conn->prepare($insertsql2);
-                            $stmt->execute();
+
+                            // Connection Object
+                            $conn = null;
+
+                            // Connection Open
+                            $connectionArr = $db->connect();
+
+                            if ($connectionArr['connected'] == 1) {
+                                $conn = $connectionArr['connection'];
+
+                                $stmt = $conn->prepare($insertsql2);
+                                $stmt->execute();
+                            } else {
+                                echo $connectionArr['title'] . " " . $connectionArr['message'];
+                            }
+                        
+                            // Connection Close
+                            $conn = null; 
                         }
                     }
 
@@ -194,7 +257,3 @@ if (!empty($_FILES['file']['name'])) {
 } else {
     echo 'Please upload a CSV file';
 }
-
-// KILL CONNECTION
-$conn = null;
-?>

@@ -4,10 +4,8 @@ include '../../process/login.php';
 
 if (!isset($_SESSION['username'])) {
   header('location:../../');
-  exit;
 } else if ($_SESSION['role'] == 'admin') {
   header('location: ../../page/admin/dashboard.php');
-  exit;
 }
 ?>  
 <!DOCTYPE html>
