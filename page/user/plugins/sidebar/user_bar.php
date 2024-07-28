@@ -82,6 +82,18 @@
             </p>
           </a>
         </li> 
+        <li class="nav-item">
+          <?php if ($_SERVER['REQUEST_URI'] == "/web_template/page/user/cursor.php") {?>
+          <a href="cursor.php" class="nav-link active">
+          <?php } else {?>
+          <a href="cursor.php" class="nav-link">
+          <?php } ?>
+            <i class="nav-icon far fa-file-alt"></i>
+            <p>
+              Cursor Pagination
+            </p>
+          </a>
+        </li> 
         <?php include 'logout.php';?>
       </ul>
     </nav>

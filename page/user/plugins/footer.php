@@ -25,6 +25,8 @@ include '../../modals/logout_modal.php';
 <script src="../../plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
 <!-- AdminLTE App -->
 <script src="../../dist/js/adminlte.js"></script>
+<!-- Serialize -->
+<script src="../../dist/js/serialize.js"></script>
 
 </body>
 </html>
